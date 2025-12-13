@@ -311,12 +311,8 @@
             font-family: monospace;
             margin-bottom: 8px;
             transition: border-color 0.2s ease;
-        }
-
-        .webhook-input:focus {
-            outline: none;
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+            background-color: #f0f0f0;
+            color: #666;
         }
 
         .webhook-hint {
@@ -434,7 +430,11 @@
                 class="webhook-input" 
                 id="webhookUrl" 
                 placeholder="https://script.google.com/macros/d/..."
+                disabled
             >
+            <button class="sync-button" onclick="editWebhookUrl()" style="margin-bottom: 4px;">
+                ✏️ Изменить URL
+            </button>
             <button class="sync-button" id="syncButton" onclick="syncToGoogleSheets()">
                 📤 Синхронизировать
             </button>
@@ -750,6 +750,18 @@ self.addEventListener('message', (event) => {
             });
         }
 
+        // Edit webhook URL
+        function editWebhookUrl() {
+            const newUrl = prompt('Введите полный URL вебхука:\n\nПример:\nhttps://script.google.com/macros/d/YOUR-SCRIPT-ID/usercontent', webhookUrl);
+            
+            if (newUrl) {
+                webhookUrl = newUrl;
+                localStorage.setItem('webhookUrl', webhookUrl);
+                document.getElementById('webhookUrl').value = webhookUrl;
+                showSyncStatus('✅ URL обновлён', 2000);
+            }
+        }
+
         // Sync to Google Sheets
         async function syncToGoogleSheets() {
             if (!webhookUrl) {
@@ -810,16 +822,31 @@ self.addEventListener('message', (event) => {
 
 1. Откройте Google Sheets (создайте новую или используйте существующую)
 2. Нажмите "Расширения" → "Apps Script"
-3. Удалите весь код и вставьте код из файла google_apps_script.gs
-4. Нажмите "Deploy" (вверху) → "New deployment"
-5. Выберите тип: "Web app"
-6. Execute as: Ваш аккаунт
-7. Who has access: "Anyone"
-8. Нажмите "Deploy"
-9. Скопируйте URL вебхука (начинается с https://script.google.com...)
-10. Вставьте URL в это поле в приложении
+3. Удалите весь код и вставьте:
 
-⚠️ ВАЖНО: Убедитесь, что хотите разрешить скрипту доступ к вашим Sheets!
+function doPost(e) {
+  try {
+    const sheet = SpreadsheetApp.getActiveSheet();
+    const data = JSON.parse(e.postData.contents);
+    sheet.appendRow([
+      data.date,
+      data.med1 ? '✅' : '❌',
+      data.med2 ? '✅' : '❌',
+      data.comment
+    ]);
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+4. Нажмите "Deploy" → "New deployment"
+5. Выберите "Web app", Execute as ваш аккаунт, Who has access "Anyone"
+6. Скопируйте URL (https://script.google.com/...)
+7. Нажмите "✏️ Изменить URL" в приложении и вставьте URL
+8. Готово! 🎉
             `);
         }
 
