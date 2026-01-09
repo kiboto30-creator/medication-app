@@ -491,8 +491,8 @@
             document.getElementById('monthYear').textContent = 
                 new Date(year, month).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
 
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
+        let firstDay = new Date(year, month, 1).getDay();
+        firstDay = (firstDay === 0) ? 6 : firstDay - 1; // Adjust for Monday start            const daysInMonth = new Date(year, month + 1, 0).getDate();
             const daysInPrevMonth = new Date(year, month, 0).getDate();
 
             const calendar = document.getElementById('calendar');
@@ -608,6 +608,11 @@
             saveData();
             renderCalendar();
             renderMedications();
+                
+    // Auto-sync to Google Sheets after toggling medication
+    if (webhookUrl && dateKey === getDateKey(new Date())) {
+        syncToGoogleSheets().catch(err => console.error('Auto-sync failed:', err));
+    }
         }
 
         // Setup comment listener
@@ -624,6 +629,11 @@
                 }
                 data[dateKey].comment = text;
                 saveData();
+                        
+        // Auto-sync to Google Sheets after saving comment
+        if (webhookUrl && dateKey === getDateKey(new Date())) {
+            syncToGoogleSheets().catch(err => console.error('Auto-sync failed:', err));
+        }
             });
         }
 
