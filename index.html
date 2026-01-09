@@ -492,7 +492,8 @@
                 new Date(year, month).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
 
         let firstDay = new Date(year, month, 1).getDay();
-        firstDay = (firstDay === 0) ? 6 : firstDay - 1; // Adjust for Monday start            const daysInMonth = new Date(year, month + 1, 0).getDate();
+        firstDay = (firstDay === 0) ? 6 : firstDay - 1; // Adjust for Monday start 
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
             const daysInPrevMonth = new Date(year, month, 0).getDate();
 
             const calendar = document.getElementById('calendar');
