@@ -453,8 +453,7 @@
         let selectedDate = new Date();
         let data = loadData();
         let notificationsEnabled = localStorage.getItem('notificationsEnabled') !== 'false';
-        let webhookUrl = localStorage.getItem('webhookUrl') || '';
-
+    let webhookUrl = localStorage.getItem('webhookUrl') || 'https://script.google.com/macros/s/AKfycbzPzzLNZC9bOKtc4lE1Q3lExuULkH_2Qaan0qR7sqouGY3ZwlAFvVavYQUY5ca6WhBSHQ/exec';
         // Initialize
         function init() {
             renderCalendar();
