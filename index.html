@@ -784,8 +784,7 @@ self.addEventListener('message', (event) => {
             showSyncStatus('⏳ Синхронизация...');
 
             try {
-                const today = getDateKey(new Date());
-                const todayData = data[today] || {};
+            const today = getDateKey(selectedDate);  // Используем выбранную дату вместо текущей                const todayData = data[today] || {};
 
                 const payload = {
                     date: today,
